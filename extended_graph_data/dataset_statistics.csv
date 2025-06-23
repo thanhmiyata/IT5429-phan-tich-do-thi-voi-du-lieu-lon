@@ -1,0 +1,11 @@
+Dataset,Description,Type,Nodes,Edges,Avg_Degree,Max_Degree,Density,Components,Largest_CC,CC_Ratio
+caida_as,CAIDA AS Relationships,AS_topology,26475,53381,4.03,2628,0.000152,1,26475,1.0
+skitter_as,Skitter AS Graph,AS_topology,1696415,11095298,13.08,35455,8e-06,756,1694616,0.999
+stanford_web,Stanford Web Graph,web_graph,281903,1992636,14.14,38625,5e-05,365,255265,0.906
+berkeley_web,Berkeley-Stanford Web Graph,web_graph,685230,6649470,19.41,84230,2.8e-05,676,654782,0.956
+google_web,Google Web Graph,web_graph,875713,4322051,9.87,6332,1.1e-05,2746,855802,0.977
+gnutella_p2p,Gnutella P2P Network,p2p_network,62586,147892,4.73,95,7.6e-05,12,62561,1.0
+gnutella04_p2p,Gnutella P2P Network (Aug 2002),p2p_network,10876,39994,7.35,103,0.000676,1,10876,1.0
+email_enron,Enron Email Network,email_network,36692,183831,10.02,1383,0.000273,1065,33696,0.918
+router_level,Pennsylvania Road Network (Internet routing analogy),infrastructure,1088092,1541898,2.83,9,3e-06,206,1087562,1.0
+arxiv_hepth,ArXiv HEP-TH Citation Network,citation_network,27770,352285,25.37,2468,0.000914,143,27400,0.987
