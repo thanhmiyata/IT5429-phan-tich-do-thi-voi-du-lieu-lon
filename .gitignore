@@ -1,0 +1,36 @@
+# Ignore large dataset files (keep only compressed .gz versions)
+extended_graph_data/*.txt
+graph_data/*.txt
+
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore virtual environment
+venv/
+env/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore log files
+*.log
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore output files
+*.png
+*.jpg
+*.pdf
+results/
+output/ 
