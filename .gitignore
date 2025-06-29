@@ -1,11 +1,20 @@
-# Ignore large dataset files (keep only compressed .gz versions)
-extended_graph_data/*.txt
+# Ignore graph data files
+graph_data/*.gpickle
 graph_data/*.txt
+graph_data/*.txt.gz
 
-# Ignore Python cache
+# Ignore python cache
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
+
+# Ignore benchmark results and logs
+benchmark/results/
+benchmark/logs/
+benchmark/temp/
+
+# IDE files
+.vscode/
+.idea/
 
 # Ignore virtual environment
 venv/
@@ -23,8 +32,6 @@ Thumbs.db
 *.log
 
 # Ignore IDE files
-.vscode/
-.idea/
 *.swp
 *.swo
 
@@ -32,5 +39,4 @@ Thumbs.db
 *.png
 *.jpg
 *.pdf
-results/
 output/ 
