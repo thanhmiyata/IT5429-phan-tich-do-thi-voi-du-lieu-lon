@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tóm Tắt Đồ Thị: Gọn Nhẹ & Hiệu Quả</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals (Background: #f8f7f2, Text: #2c3e50, Accents: #3498db, #2ecc71, #e74c3c, #f39c12) -->
+    <!-- Application Structure Plan: A single-page, scrollable application with a sticky top navigation for quick access to key sections. The structure deviates from the linear slide format to prioritize user-driven exploration. It starts with the problem (The Challenge), presents the abstract solution (Graph Summarization), details the methods (The Algorithms), provides an interactive dashboard for result exploration (The Proof), and concludes. This thematic grouping allows a user to either follow the narrative flow or jump directly to the section of interest, like the interactive charts, which is more effective for data exploration than a static presentation. -->
+    <!-- Visualization & Content Choices: 
+- Problem Stats (Slide 2) -> Goal: Inform/Hook -> Viz: Animated JS counters -> Justification: Engaging, highlights scale.
+- Technical Challenges (Slide 3) -> Goal: Inform -> Viz: Interactive HTML/CSS cards -> Justification: Scannable, modern UI.
+- G -> S+C Model (Slide 4) -> Goal: Explain -> Viz: HTML/CSS diagram -> Interaction: Hover tooltips -> Justification: Deeper understanding through interaction.
+- Algorithm Trade-off (Slide 6) -> Goal: Compare -> Viz: Chart.js Scatter Plot -> Justification: Clearly visualizes the quality/speed trade-off space.
+- Mags/Mags-DM Steps (Slides 8,9) -> Goal: Explain Process -> Viz: Styled HTML sections with flexbox -> Justification: Avoids complex graphics, easy to build and maintain.
+- Main Results (Slides 11,12) -> Goal: Compare/Prove -> Viz: Two interactive Chart.js charts (Scatter and Bar) -> Interaction: Dropdown to select dataset updates both charts dynamically -> Justification: Empowers user to explore data, making the proof more compelling.
+- "Why Faster" Insight (Slide 13) -> Goal: Explain -> Viz: Simple HTML/CSS bar visualization comparing correction set sizes -> Justification: Simple, direct visual explanation of the core technical reason for success.
+- Library/Method: Chart.js for all charts on canvas. HTML/CSS for diagrams. All interactions powered by vanilla JavaScript.
+-->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #f8f7f2;
+            color: #2c3e50;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.08);
+        }
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="navbar" class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="text-xl font-bold text-gray-800">Tóm Tắt Đồ Thị</div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#problem" class="nav-link py-2">Vấn đề</a>
+                <a href="#solution" class="nav-link py-2">Giải pháp</a>
+                <a href="#algorithms" class="nav-link py-2">Thuật toán</a>
+                <a href="#results" class="nav-link py-2">Kết quả</a>
+                <a href="#conclusion" class="nav-link py-2">Kết luận</a>
+            </div>
+             <button id="mobile-menu-button" class="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
+            <a href="#problem" class="block nav-link py-2 text-center">Vấn đề</a>
+            <a href="#solution" class="block nav-link py-2 text-center">Giải pháp</a>
+            <a href="#algorithms" class="block nav-link py-2 text-center">Thuật toán</a>
+            <a href="#results" class="block nav-link py-2 text-center">Kết quả</a>
+            <a href="#conclusion" class="block nav-link py-2 text-center">Kết luận</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-16">
+
+        <section id="hero" class="text-center mb-16 md:mb-24">
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-4">GRAPH SUMMARIZATION</h1>
+            <h2 class="text-2xl md:text-3xl font-semibold text-[#3498db] mb-6">Compactness Meets Efficiency</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                Tăng tốc truy vấn trên Đồ thị Internet và Mạng xã hội khổng lồ thông qua các kỹ thuật tóm tắt thông minh, cân bằng giữa sự gọn nhẹ và hiệu quả.
+            </p>
+        </section>
+
+        <section id="problem" class="mb-16 md:mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-2">Vấn Đề: Kỷ Nguyên Dữ Liệu Đồ Thị Khổng Lồ</h2>
+                <p class="max-w-2xl mx-auto text-gray-600">Đồ thị ở khắp mọi nơi và chúng đang trở nên quá lớn, đặt ra những thách thức kỹ thuật nghiêm trọng.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-12">
+                <div>
+                    <div class="text-5xl font-bold text-[#3498db]" data-target="2.9" data-suffix=" tỷ+">0</div>
+                    <p class="text-gray-500 mt-2">Người dùng Facebook</p>
+                </div>
+                <div>
+                    <div class="text-5xl font-bold text-[#e74c3c]" data-target="50" data-suffix=" tỷ+">0</div>
+                    <p class="text-gray-500 mt-2">Trang web được lập chỉ mục</p>
+                </div>
+                 <div>
+                    <div class="text-5xl font-bold text-[#2ecc71]" data-target="1.8" data-suffix=" tỷ+">0</div>
+                    <p class="text-gray-500 mt-2">Cạnh trong đồ thị Friendster</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card p-6">
+                    <h3 class="font-bold text-xl mb-2">Overflow Bộ nhớ</h3>
+                    <p class="text-gray-600">Đồ thị gốc quá lớn, không thể vừa với RAM của một máy tính thông thường.</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="font-bold text-xl mb-2">Thời Gian Tính Toán</h3>
+                    <p class="text-gray-600">Các thuật toán mất hàng giờ, thậm chí hàng ngày để chạy trên đồ thị gốc.</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="font-bold text-xl mb-2">Chi Phí Vận Hành</h3>
+                    <p class="text-gray-600">Yêu cầu các hệ thống máy chủ phân tán đắt đỏ và tốn nhiều năng lượng.</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="font-bold text-xl mb-2">Độ Trễ Truy Vấn</h3>
+                    <p class="text-gray-600">Các ứng dụng thời gian thực trở nên chậm chạp, ảnh hưởng trải nghiệm người dùng.</p>
+                </div>
+            </div>
+             <p class="text-center mt-8 font-semibold text-lg text-[#e74c3c]">Xử lý trực tiếp trên đồ thị gốc là không hiệu quả và tốn kém!</p>
+        </section>
+
+        <section id="solution" class="mb-16 md:mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-2">Giải Pháp: Tóm Tắt Đồ Thị</h2>
+                <p class="max-w-2xl mx-auto text-gray-600">Chúng ta biến đổi đồ thị lớn thành một phiên bản nhỏ hơn nhưng vẫn đảm bảo tính chính xác cho các truy vấn.</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <div class="flex flex-col md:flex-row items-center justify-around gap-8 text-center">
+                    <div class="w-full md:w-1/3">
+                        <div class="text-2xl font-bold mb-2">Đồ thị gốc (G)</div>
+                        <div class="w-32 h-32 mx-auto bg-red-100 border-2 border-red-300 rounded-full flex items-center justify-center text-red-500 font-bold text-4xl shadow-md">G</div>
+                    </div>
+                    <div class="text-4xl font-light text-gray-400">→</div>
+                    <div class="w-full md:w-2/3 flex flex-col sm:flex-row items-center gap-4">
+                        <div class="w-full sm:w-1/2">
+                             <div class="text-2xl font-bold mb-2">Siêu đồ thị (S)</div>
+                             <div class="w-24 h-24 mx-auto bg-blue-100 border-2 border-blue-300 rounded-full flex items-center justify-center text-blue-500 font-bold text-3xl shadow-md">S</div>
+                             <p class="mt-2 text-sm text-gray-500">Phiên bản nén của G</p>
+                        </div>
+                        <div class="text-4xl font-light text-gray-400">+</div>
+                        <div class="w-full sm:w-1/2">
+                             <div class="text-2xl font-bold mb-2">Sửa lỗi (C)</div>
+                            <div class="w-24 h-24 mx-auto bg-green-100 border-2 border-green-300 rounded-lg flex items-center justify-center text-green-500 font-bold text-3xl shadow-md">C</div>
+                            <p class="mt-2 text-sm text-gray-500">Các cạnh bị thay đổi</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-xl font-bold text-center mb-2">Bài Toán Tối Ưu</h3>
+                    <div class="text-center bg-gray-100 p-4 rounded-lg font-mono text-lg">
+                        Minimize: cost(Summary) = |E<sub>s</sub>| + |C|
+                    </div>
+                    <p class="text-center mt-2 text-gray-600">Mục tiêu là tạo ra bản tóm tắt có tổng kích thước nhỏ gọn nhất có thể.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="algorithms" class="mb-16 md:mb-24 scroll-mt-20">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-2">Các Thuật Toán: Phá Vỡ Sự Đánh Đổi</h2>
+                <p class="max-w-2xl mx-auto text-gray-600">Các phương pháp truyền thống buộc phải chọn giữa Tốc độ và Chất lượng. Mags & Mags-DM mang đến giải pháp tốt nhất cho cả hai.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-8">
+                    <div class="mb-4">
+                        <span class="tag bg-blue-100 text-blue-800">Chất Lượng Tối Ưu</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Mags: "Tham Lam Thông Minh"</h3>
+                    <p class="text-gray-600 mb-4">Đạt chất lượng tóm tắt tương đương thuật toán Greedy lý tưởng nhưng với tốc độ thực tế, khả thi.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><b>Lọc ứng viên bằng MinHash:</b> Giảm không gian tìm kiếm, chỉ tập trung vào các cặp nút tiềm năng.</span></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><b>Hợp nhất theo lô (batch):</b> Giảm số lần cập nhật cấu trúc, tăng tốc độ đáng kể.</span></li>
+                    </ul>
+                </div>
+                <div class="card p-8">
+                    <div class="mb-4">
+                         <span class="tag bg-green-100 text-green-800">Tốc Độ Vượt Trội</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Mags-DM: "Chia Để Trị Tối Ưu"</h3>
+                    <p class="text-gray-600 mb-4">Đạt tốc độ cực nhanh của các phương pháp Chia-để-trị nhưng với chất lượng tóm tắt vượt trội.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><b>Phân chia bằng nhiều hàm băm:</b> Tạo các phân vùng cân bằng, lý tưởng cho song song hóa.</span></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><b>Lựa chọn dựa trên lợi ích thực tế:</b> Đưa ra quyết định hợp nhất thông minh hơn, không chỉ dựa trên độ tương đồng.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="results" class="mb-16 md:mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-2">Kết Quả Thử Nghiệm Tương Tác</h2>
+                <p class="max-w-2xl mx-auto text-gray-600">Khám phá hiệu suất của các thuật toán trên những bộ dữ liệu thực tế. Chọn một bộ dữ liệu để xem kết quả.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="card p-6">
+                    <h3 class="text-xl font-bold text-center mb-4">So sánh Thời gian & Chất lượng Tóm tắt</h3>
+                    <div class="flex justify-center mb-4">
+                        <select id="dataset-selector" class="p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="web-BerkStan" selected>web-BerkStan (7.6M cạnh)</option>
+                            <option value="as-skitter">as-skitter (11M cạnh)</option>
+                            <option value="cit-Patents">cit-Patents (16.5M cạnh)</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="summaryChart"></canvas>
+                    </div>
+                     <p class="text-center text-sm text-gray-500 mt-2">Trục X: Thời gian chạy (giây, thang log, càng thấp càng tốt). Trục Y: Kích thước tóm tắt (%, càng thấp càng tốt).</p>
+                </div>
+                 <div class="card p-6">
+                    <h3 class="text-xl font-bold text-center mb-4">So sánh Tốc độ Truy vấn</h3>
+                    <div class="flex justify-center mb-4">
+                        <select id="query-selector" class="p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="pagerank" selected>PageRank (10 vòng lặp)</option>
+                            <option value="sssp">SSSP (từ đỉnh ngẫu nhiên)</option>
+                            <option value="neighbor2hop">Hàng xóm 2-hop (từ đỉnh bậc cao)</option>
+                        </select>
+                    </div>
+                     <div class="chart-container">
+                        <canvas id="queryChart"></canvas>
+                    </div>
+                     <p class="text-center text-sm text-gray-500 mt-2" id="query-chart-description">Thời gian chạy truy vấn PageRank (ms, thang log, càng thấp càng tốt).</p>
+                </div>
+            </div>
+            <!-- Detailed Performance Tables -->
+            <div class="mt-12 space-y-8">
+                <!-- Table 1: Thời gian chạy và kích thước tóm tắt -->
+                <div class="card p-6">
+                    <h3 class="text-xl font-bold text-center mb-4">Bảng 1: Thời gian Chạy & Kích Thước Tóm Tắt</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border-collapse border border-gray-300 text-sm">
+                            <thead class="bg-teal-600 text-white">
+                                <tr>
+                                    <th class="border border-gray-300 px-3 py-2">Dataset</th>
+                                    <th class="border border-gray-300 px-3 py-2">Thuật toán</th>
+                                    <th class="border border-gray-300 px-3 py-2">Thời gian chạy</th>
+                                    <th class="border border-gray-300 px-3 py-2">Kích thước tóm tắt</th>
+                                    <th class="border border-gray-300 px-3 py-2">Tăng tốc (so với LDME)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-medium">web-BerkStan (7.6M cạnh)</td>
+                                    <td class="border border-gray-300 px-3 py-2">LDME</td>
+                                    <td class="border border-gray-300 px-3 py-2">00:42:15</td>
+                                    <td class="border border-gray-300 px-3 py-2">41.20%</td>
+                                    <td class="border border-gray-300 px-3 py-2">1.0x</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2 font-medium">web-BerkStan (7.6M cạnh)</td>
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Mags</td>
+                                    <td class="border border-gray-300 px-3 py-2">00:04:08</td>
+                                    <td class="border border-gray-300 px-3 py-2">12.10%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">10.2x</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-medium">web-BerkStan (7.6M cạnh)</td>
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Mags-DM</td>
+                                    <td class="border border-gray-300 px-3 py-2">00:00:26</td>
+                                    <td class="border border-gray-300 px-3 py-2">14.90%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">97.5x</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2 font-medium">as-skitter (11M cạnh)</td>
+                                    <td class="border border-gray-300 px-3 py-2">LDME</td>
+                                    <td class="border border-gray-300 px-3 py-2">01:03:44</td>
+                                    <td class="border border-gray-300 px-3 py-2">54.80%</td>
+                                    <td class="border border-gray-300 px-3 py-2">1.0x</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-medium">as-skitter (11M cạnh)</td>
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Mags</td>
+                                    <td class="border border-gray-300 px-3 py-2">00:06:21</td>
+                                    <td class="border border-gray-300 px-3 py-2">25.40%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">10.0x</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2 font-medium">as-skitter (11M cạnh)</td>
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Mags-DM</td>
+                                    <td class="border border-gray-300 px-3 py-2">00:00:41</td>
+                                    <td class="border border-gray-300 px-3 py-2">28.10%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">93.2x</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-medium">cit-Patents (16.5M cạnh)</td>
+                                    <td class="border border-gray-300 px-3 py-2">LDME</td>
+                                    <td class="border border-gray-300 px-3 py-2">02:11:18</td>
+                                    <td class="border border-gray-300 px-3 py-2">44.50%</td>
+                                    <td class="border border-gray-300 px-3 py-2">1.0x</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2 font-medium">cit-Patents (16.5M cạnh)</td>
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Mags</td>
+                                    <td class="border border-gray-300 px-3 py-2">00:11:55</td>
+                                    <td class="border border-gray-300 px-3 py-2">18.30%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">11.0x</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-medium">cit-Patents (16.5M cạnh)</td>
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Mags-DM</td>
+                                    <td class="border border-gray-300 px-3 py-2">00:00:58</td>
+                                    <td class="border border-gray-300 px-3 py-2">21.50%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">135.8x</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Table 2: Query Performance -->
+                <div class="card p-6">
+                    <h3 class="text-xl font-bold text-center mb-4">Bảng 2: Hiệu Suất Truy Vấn & Độ Chính Xác</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border-collapse border border-gray-300 text-sm">
+                            <thead class="bg-teal-600 text-white">
+                                <tr>
+                                    <th class="border border-gray-300 px-3 py-2">Loại Truy vấn</th>
+                                    <th class="border border-gray-300 px-3 py-2">Thuật toán / Nền tảng</th>
+                                    <th class="border border-gray-300 px-3 py-2">Thời gian chạy (ms)</th>
+                                    <th class="border border-gray-300 px-3 py-2">Độ chính xác / Tương quan</th>
+                                    <th class="border border-gray-300 px-3 py-2">Tăng tốc (so với Gốc)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-medium" rowspan="4">PageRank<br/>(10 vòng lặp)</td>
+                                    <td class="border border-gray-300 px-3 py-2">Đồ thị Gốc</td>
+                                    <td class="border border-gray-300 px-3 py-2">153.200</td>
+                                    <td class="border border-gray-300 px-3 py-2">100%</td>
+                                    <td class="border border-gray-300 px-3 py-2">1.0x</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2">Bản tóm tắt LDME</td>
+                                    <td class="border border-gray-300 px-3 py-2">9.450</td>
+                                    <td class="border border-gray-300 px-3 py-2">92.5%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">16.2x</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Bản tóm tắt Mags-DM</td>
+                                    <td class="border border-gray-300 px-3 py-2">2.110</td>
+                                    <td class="border border-gray-300 px-3 py-2">95.8%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">72.6x</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Bản tóm tắt Mags</td>
+                                    <td class="border border-gray-300 px-3 py-2">1.680</td>
+                                    <td class="border border-gray-300 px-3 py-2">96.5%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">91.2x</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-medium" rowspan="4">SSSP<br/>(từ đỉnh ngẫu nhiên)</td>
+                                    <td class="border border-gray-300 px-3 py-2">Đồ thị Gốc</td>
+                                    <td class="border border-gray-300 px-3 py-2">865</td>
+                                    <td class="border border-gray-300 px-3 py-2">100%</td>
+                                    <td class="border border-gray-300 px-3 py-2">1.0x</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2">Bản tóm tắt LDME</td>
+                                    <td class="border border-gray-300 px-3 py-2">112</td>
+                                    <td class="border border-gray-300 px-3 py-2">98.0%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">7.7x</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Bản tóm tắt Mags-DM</td>
+                                    <td class="border border-gray-300 px-3 py-2">46</td>
+                                    <td class="border border-gray-300 px-3 py-2">99.2%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">18.8x</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Bản tóm tắt Mags</td>
+                                    <td class="border border-gray-300 px-3 py-2">39</td>
+                                    <td class="border border-gray-300 px-3 py-2">99.5%</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">22.2x</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-medium" rowspan="4">Hàng xóm 2-hop<br/>(từ đỉnh bậc cao)</td>
+                                    <td class="border border-gray-300 px-3 py-2">Đồ thị Gốc</td>
+                                    <td class="border border-gray-300 px-3 py-2">5.240</td>
+                                    <td class="border border-gray-300 px-3 py-2">100% (Chính xác)</td>
+                                    <td class="border border-gray-300 px-3 py-2">1.0x</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2">Bản tóm tắt LDME</td>
+                                    <td class="border border-gray-300 px-3 py-2">760</td>
+                                    <td class="border border-gray-300 px-3 py-2">91% (Jaccard Sim.)</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">6.9x</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Bản tóm tắt Mags-DM</td>
+                                    <td class="border border-gray-300 px-3 py-2">285</td>
+                                    <td class="border border-gray-300 px-3 py-2">96% (Jaccard Sim.)</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">18.4x</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">Bản tóm tắt Mags</td>
+                                    <td class="border border-gray-300 px-3 py-2">215</td>
+                                    <td class="border border-gray-300 px-3 py-2">98% (Jaccard Sim.)</td>
+                                    <td class="border border-gray-300 px-3 py-2 text-green-600 font-bold">24.4x</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">
+                        <strong>Lưu ý:</strong> Truy vấn Hàng xóm 2-hop có thời gian tuyệt đối chậm hơn nhưng vẫn đạt tăng tốc đáng kể so với đồ thị gốc.
+                    </p>
+                </div>
+            </div>
+            <div class="mt-12 card p-8">
+                <h3 class="text-2xl font-bold text-center mb-4">Tại sao bản tóm tắt "tốt" lại truy vấn nhanh hơn?</h3>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-6">
+                    <b>Câu trả lời nằm ở kích thước của tập sửa lỗi (C).</b> Các thao tác trên tập này đòi hỏi truy cập bộ nhớ ngẫu nhiên, vốn rất tốn kém (gây cache miss). Mags tạo ra tập C nhỏ hơn nhiều, giúp giảm thiểu chi phí này.
+                </p>
+                <div class="w-full max-w-2xl mx-auto">
+                    <div id="insight-visualization"></div>
+                </div>
+            </div>
+
+            
+
+        </section>
+        
+        <section id="conclusion" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-2">Kết Luận & Hướng Phát Triển</h2>
+                <p class="max-w-2xl mx-auto text-gray-600">Tóm tắt đồ thị đã sẵn sàng cho các ứng dụng quy mô lớn, mở ra nhiều cơ hội mới.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-8">
+                    <h3 class="text-xl font-bold mb-4">Khuyến Nghị</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="font-semibold text-green-700">Sử dụng Mags-DM:</p>
+                            <p class="text-gray-600">Khi ưu tiên tốc độ tóm tắt cực nhanh cho các ứng dụng gần thời gian thực.</p>
+                        </div>
+                         <div>
+                            <p class="font-semibold text-blue-700">Sử dụng Mags:</p>
+                            <p class="text-gray-600">Khi ưu tiên chất lượng tóm tắt cao nhất để tăng tốc truy vấn tối đa, phù hợp cho phân tích sâu.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-8">
+                     <h3 class="text-xl font-bold mb-4">Hướng Phát Triển Tương Lai</h3>
+                     <ul class="space-y-3 list-disc list-inside text-gray-600">
+                        <li>Tóm tắt Đồ thị Động (Dynamic Graphs).</li>
+                        <li>Tóm tắt Có Mất mát Thông tin (Lossy Summarization).</li>
+                        <li>Tích hợp với AI/ML để tăng tốc GNNs.</li>
+                     </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="mt-16 bg-gray-100 py-6">
+        <div class="container mx-auto text-center text-gray-500">
+            <p>Dựa trên bài báo "Mags: A Multiscale, Graph-Based Algorithm for Graph Summarization".</p>
+            <p>Phát triển bởi [Tên của bạn] - [Tên môn học]</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const data = {
+        'web-BerkStan': {
+            summary: {
+                labels: ['LDME', 'Mags-DM', 'Mags'],
+                times: [2535, 26, 248], // 42:15, 0:26, 4:08 in seconds
+                costs: [41.20, 14.90, 12.10] // percentage
+            },
+            query: {
+                labels: ['Gốc', 'LDME', 'Mags-DM', 'Mags'],
+                pagerank: [153200, 9450, 2110, 1680], // milliseconds
+                sssp: [865, 112, 46, 39], // milliseconds
+                neighbor2hop: [5240, 760, 285, 215] // milliseconds
+            },
+            insight: {
+                ldme_c: 30,
+                mags_c: 8,
+            }
+        },
+        'as-skitter': {
+            summary: {
+                labels: ['LDME', 'Mags-DM', 'Mags'],
+                times: [3824, 41, 381], // 1:03:44, 0:41, 6:21 in seconds
+                costs: [54.80, 28.10, 25.40] // percentage
+            },
+            query: {
+                labels: ['Gốc', 'LDME', 'Mags-DM', 'Mags'],
+                pagerank: [153200, 9450, 2110, 1680], // milliseconds (same query performance)
+                sssp: [865, 112, 46, 39], // milliseconds (same query performance)
+                neighbor2hop: [5240, 760, 285, 215] // milliseconds
+            },
+            insight: {
+                ldme_c: 35,
+                mags_c: 10,
+            }
+        },
+        'cit-Patents': {
+            summary: {
+                labels: ['LDME', 'Mags-DM', 'Mags'],
+                times: [7878, 58, 715], // 2:11:18, 0:58, 11:55 in seconds
+                costs: [44.50, 21.50, 18.30] // percentage
+            },
+            query: {
+                labels: ['Gốc', 'LDME', 'Mags-DM', 'Mags'],
+                pagerank: [153200, 9450, 2110, 1680], // milliseconds (same query performance)
+                sssp: [865, 112, 46, 39], // milliseconds (same query performance)
+                neighbor2hop: [5240, 760, 285, 215] // milliseconds
+            },
+            insight: {
+                ldme_c: 25,
+                mags_c: 6,
+            }
+        }
+    };
+
+    let summaryChart, queryChart;
+    const summaryCtx = document.getElementById('summaryChart').getContext('2d');
+    const queryCtx = document.getElementById('queryChart').getContext('2d');
+    const datasetSelector = document.getElementById('dataset-selector');
+    const querySelector = document.getElementById('query-selector');
+    const insightContainer = document.getElementById('insight-visualization');
+
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            if (context.dataset.yAxisID === 'ycost') {
+                                label += new Intl.NumberFormat('vi-VN', { notation: "compact", maximumFractionDigits: 2 }).format(context.parsed.y);
+                            } else {
+                               label += context.parsed.y + 's';
+                            }
+                        }
+                        return label;
+                    }
+                }
+            }
+        },
+    };
+    
+    function createSummaryChart(datasetKey) {
+        if (summaryChart) summaryChart.destroy();
+        const chartData = data[datasetKey].summary;
+
+        summaryChart = new Chart(summaryCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'LDME',
+                        data: [{x: chartData.times[0], y: chartData.costs[0]}],
+                        backgroundColor: 'rgb(231, 76, 60, 0.7)',
+                        borderColor: 'rgb(231, 76, 60)',
+                        pointRadius: 10,
+                        pointHoverRadius: 12,
+                    },
+                    {
+                        label: 'Mags-DM',
+                        data: [{x: chartData.times[1], y: chartData.costs[1]}],
+                        backgroundColor: 'rgb(46, 204, 113, 0.7)',
+                        borderColor: 'rgb(46, 204, 113)',
+                        pointRadius: 10,
+                        pointHoverRadius: 12,
+                    },
+                     {
+                        label: 'Mags',
+                        data: [{x: chartData.times[2], y: chartData.costs[2]}],
+                        backgroundColor: 'rgb(52, 152, 219, 0.7)',
+                        borderColor: 'rgb(52, 152, 219)',
+                        pointRadius: 10,
+                        pointHoverRadius: 12,
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                 plugins: {
+                    tooltip: {
+                         callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                return `${label}: (Thời gian: ${context.parsed.x}s, Kích thước: ${context.parsed.y}%)`;
+                            }
+                        }
+                    }
+                },
+                                        scales: {
+                            x: {
+                                type: 'logarithmic',
+                                title: { display: true, text: 'Thời gian chạy (giây, thang log)' }
+                            },
+                            y: {
+                                 title: { display: true, text: 'Kích thước tóm tắt (%)' },
+                                 ticks: {
+                                     callback: function(value) {
+                                        return value + '%';
+                                     }
+                                 }
+                            }
+                        }
+            }
+        });
+    }
+    
+    function createQueryChart(datasetKey, queryType = 'pagerank') {
+        if (queryChart) queryChart.destroy();
+        const chartData = data[datasetKey].query;
+        
+        const queryConfig = {
+            pagerank: { label: 'Thời gian chạy PageRank (ms)', data: chartData.pagerank },
+            sssp: { label: 'Thời gian chạy SSSP (ms)', data: chartData.sssp },
+            neighbor2hop: { label: 'Thời gian chạy Hàng xóm 2-hop (ms)', data: chartData.neighbor2hop }
+        };
+        
+        queryChart = new Chart(queryCtx, {
+            type: 'bar',
+            data: {
+                labels: chartData.labels,
+                datasets: [{
+                    label: queryConfig[queryType].label,
+                    data: queryConfig[queryType].data,
+                    backgroundColor: [
+                        'rgba(149, 165, 166, 0.5)',
+                        'rgba(231, 76, 60, 0.5)',
+                        'rgba(46, 204, 113, 0.5)',
+                        'rgba(52, 152, 219, 0.5)'
+                    ],
+                    borderColor: [
+                        '#95a5a6',
+                        '#e74c3c',
+                        '#2ecc71',
+                        '#3498db'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                let value = context.parsed.y;
+                                
+                                // Format số cho các giá trị đã chuyển đổi đơn vị
+                                if (value === 153200) {
+                                    value = '153.200';
+                                } else if (value === 9450) {
+                                    value = '9.450';
+                                } else if (value === 2110) {
+                                    value = '2.110';
+                                } else if (value === 1680) {
+                                    value = '1.680';
+                                } else if (value === 5240) {
+                                    value = '5.240';
+                                } else if (value % 1 === 0) {
+                                    // Số nguyên khác
+                                    value = value.toString();
+                                } else {
+                                    // Số thập phân khác
+                                    value = value.toFixed(2);
+                                }
+                                
+                                return label + value + 'ms';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'logarithmic',
+                        title: {
+                            display: true,
+                            text: 'Thời gian (ms) - Thang Log'
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    function createInsightVisualization(datasetKey) {
+        const insightData = data[datasetKey].insight;
+        const total = insightData.ldme_c + insightData.mags_c;
+        const ldme_s = 100 - insightData.ldme_c;
+        const mags_s = 100 - insightData.mags_c;
+        
+        insightContainer.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+                <div>
+                    <h4 class="font-bold mb-2">LDME</h4>
+                    <div class="bg-gray-200 rounded-full flex overflow-hidden mx-auto" style="height: 37px; width: 90%; max-width: 300px;">
+                        <div class="flex items-center justify-center h-full bg-blue-300 text-blue-800 text-xs font-medium" style="width: ${ldme_s}%">S (${ldme_s}%)</div>
+                        <div class="flex items-center justify-center h-full bg-red-300 text-red-800 text-xs font-medium" style="width: ${insightData.ldme_c}%">C (${insightData.ldme_c}%)</div>
+                    </div>
+                </div>
+                 <div>
+                    <h4 class="font-bold mb-2">Mags</h4>
+                    <div class="bg-gray-200 rounded-full flex overflow-hidden mx-auto" style="height: 37px; width: 90%; max-width: 300px;">
+                        <div class="flex items-center justify-center h-full bg-blue-300 text-blue-800 text-xs font-medium" style="width: ${mags_s}%">S (${mags_s}%)</div>
+                        <div class="flex items-center justify-center h-full bg-red-300 text-red-800 text-xs font-medium" style="width: ${insightData.mags_c}%">C (${insightData.mags_c}%)</div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center mt-4 text-sm text-gray-500">Minh họa tỷ lệ chi phí truy vấn giữa Siêu đồ thị (S) và Tập sửa lỗi (C).</p>
+        `;
+    }
+
+    function updateDashboard(datasetKey, queryType = 'pagerank') {
+        createSummaryChart(datasetKey);
+        createQueryChart(datasetKey, queryType);
+        createInsightVisualization(datasetKey);
+        updateQueryDescription(queryType);
+    }
+    
+    function updateQueryDescription(queryType) {
+        const descriptions = {
+            pagerank: 'Thời gian chạy truy vấn PageRank (ms, thang log, càng thấp càng tốt).',
+            sssp: 'Thời gian chạy truy vấn SSSP (ms, thang log, càng thấp càng tốt).',
+            neighbor2hop: 'Thời gian chạy truy vấn Hàng xóm 2-hop (ms, thang log). Lưu ý: Bản tóm tắt chậm hơn do phải duyệt tập sửa lỗi C.'
+        };
+        document.getElementById('query-chart-description').textContent = descriptions[queryType];
+    }
+    
+    datasetSelector.addEventListener('change', (e) => {
+        const selectedDataset = e.target.value;
+        const selectedQuery = querySelector.value;
+        updateDashboard(selectedDataset, selectedQuery);
+    });
+    
+    querySelector.addEventListener('change', (e) => {
+        const selectedDataset = datasetSelector.value;
+        const selectedQuery = e.target.value;
+        updateDashboard(selectedDataset, selectedQuery);
+    });
+
+    const counters = document.querySelectorAll('[data-target]');
+    counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const suffix = counter.getAttribute('data-suffix') || '';
+        let current = 0;
+        const increment = target / 100;
+
+        const updateCounter = () => {
+            if (current < target) {
+                current += increment;
+                counter.innerText = current.toFixed(1) + suffix;
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.innerText = target + suffix;
+            }
+        };
+        updateCounter();
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('section[id]');
+    
+    window.addEventListener('scroll', () => {
+        let currentSection = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 80) {
+                currentSection = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').substring(1) === currentSection) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    updateDashboard('web-BerkStan', 'pagerank');
+});
+</script>
+
+</body>
+</html>

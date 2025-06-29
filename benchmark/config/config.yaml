@@ -1,0 +1,125 @@
+# Configuration for Graph Summarization Benchmark System
+# =======================================================
+
+# Dataset Configuration
+datasets:
+  web-BerkStan:
+    path: "../graph_data/web-BerkStan.txt"
+    # processed_path: "../graph_data/web-BerkStan_processed.gpickle"
+    nodes: 685230
+    edges: 7600595
+    type: "web_graph"
+    description: "Web crawl của Stanford Berkeley"
+  
+  as-skitter:
+    path: "../graph_data/as-skitter.txt"
+    # processed_path: "../graph_data/as-skitter_processed.gpickle"
+    nodes: 1696415
+    edges: 11095298
+    type: "internet_topology"
+    description: "AS-level Internet topology từ Skitter project"
+  
+  cit-Patents:
+    path: "../graph_data/cit-Patents.txt"
+    # processed_path: "../graph_data/cit-Patents_processed.gpickle"
+    nodes: 3774768
+    edges: 16518948
+    type: "citation_network"
+    description: "Mạng trích dẫn bằng sáng chế USPTO"
+
+# Algorithm Configuration
+algorithms:
+  mags:
+    executable: "src/mags"
+    source: "src/mags.cpp"
+    description: "MAGS algorithm - MinHash Assisted Graph Summarization"
+    parameters:
+      threads: 40
+      k: 5
+      T: 50
+      b: 5
+      h: 10
+    
+  mags_dm:
+    executable: "src/mags_dm"  
+    source: "src/mags_dm.cpp"
+    description: "MAGS-DM algorithm - Divide and Merge variant"
+    parameters:
+      threads: 40
+      k: 5
+      T: 50
+      b: 5
+      h: 10
+      
+  ldme:
+    executable: "java -jar ldme.jar"
+    source: "ldme.jar"
+    description: "LDME baseline algorithm"
+    parameters:
+      memory: "8g"
+
+# Benchmark Configuration
+benchmark:
+  # Thời gian timeout cho mỗi thuật toán (giây)
+  timeout: 7200  # 2 hours
+  
+  # Số lần chạy để tính trung bình
+  runs: 3
+  
+  # Queries để benchmark
+  queries:
+    pagerank:
+      enabled: true
+      iterations: 100
+      damping: 0.85
+      tolerance: 1e-6
+      
+    sssp:
+      enabled: true
+      source_node: "high_degree"  # "random", "high_degree", hoặc node_id cụ thể
+      max_paths: 10000  # Giới hạn paths để tránh timeout
+      
+    2hop_neighbors:
+      enabled: true
+      num_target_nodes: 100  # Số nodes bậc cao để query
+      description: "Query 2-hop neighbors từ các đỉnh bậc cao"
+      
+    reachability:
+      enabled: true
+      sample_pairs: 1000
+
+# Resource Monitoring
+monitoring:
+  enabled: true
+  interval: 1.0  # seconds
+  metrics:
+    - cpu_percent
+    - memory_mb
+    - memory_percent
+    - disk_io
+
+# Output Configuration  
+output:
+  results_file: "results/benchmark_results.csv"
+  detailed_results_file: "results/detailed_results.csv"
+  resource_usage_file: "results/resource_usage.csv"
+  report_file: "FINAL_BENCHMARK_REPORT.md"
+  log_file: "logs/benchmark.log"
+  
+  # Formats
+  time_format: "%Y-%m-%d %H:%M:%S"
+  precision: 4
+
+# Compilation Configuration
+compilation:
+  compiler: "g++"
+  flags: ["-O3", "-fopenmp", "-std=c++17", "-Wall", "-Wextra"]
+  include_dirs: []
+  libraries: ["pthread"]
+  
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  console_output: true
+  file_output: true 

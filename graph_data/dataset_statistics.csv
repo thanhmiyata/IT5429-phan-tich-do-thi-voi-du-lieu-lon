@@ -1,0 +1,4 @@
+nodes,edges,density,is_directed,avg_degree,max_degree,min_degree,is_connected,largest_cc_size,largest_cc_fraction,url,description,type,expected_edges,directed,processing_time
+1696415,11095298,7.710899005763673e-06,False,13.080877025963575,35455,1,False,1694616.0,0.9989395283583321,https://snap.stanford.edu/data/as-skitter.txt.gz,Internet topology AS-level from Skitter,infrastructure,11095298,False,4.090706825256348
+685230,7600595,1.6187339985957948e-05,True,22.184069582475956,84290,1,,,,https://snap.stanford.edu/data/web-BerkStan.txt.gz,Berkeley-Stanford web graph,web,7600595,True,1.9061639308929443
+3774768,16518947,1.159316308737157e-06,True,8.752297889565664,793,1,,,,https://snap.stanford.edu/data/cit-Patents.txt.gz,Citation network among US Patents,citation,16518948,True,194.10183024406433
